@@ -33,7 +33,7 @@ client.on("ready", function _callee(c) {
         case 0:
           _context.prev = 0;
           _context.next = 3;
-          return regeneratorRuntime.awrap(client.channels.cache.get(process.env.GUILD_ID));
+          return regeneratorRuntime.wrap(client.channels.cache.get(process.env.GUILD_ID));
 
         case 3:
           channel = _context.sent;

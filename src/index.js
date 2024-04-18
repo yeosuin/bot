@@ -5,6 +5,7 @@ const {
   EmbedBuilder,
   ActivityType,
 } = require("discord.js");
+const eventHandler = require("./handlers/eventHandler");
 
 const client = new Client({
   intents: [
@@ -15,26 +16,7 @@ const client = new Client({
   ],
 });
 
-let status = [
-  {
-    name: "디코 개발 공부",
-    type: ActivityType.Playing,
-  },
-  {
-    name: "개발",
-    type: ActivityType.Watching,
-    url: "https://youtu.be/OqxHy8sCtvA?si=vZ5l_7pgYxndYmMl",
-  },
-  {
-    name: "노래",
-    type: ActivityType.Listening,
-  },
-];
-
-client.on("ready", (c) => {
-  console.log(`☑️  ${c.user.tag}`);
-  client.user.setActivity((status[0]))
-});
+eventHandler(client);
 
 client.once("interactionCreate", (interaction) => {
   if (!interaction.isChatInputCommand()) return;
@@ -48,8 +30,8 @@ client.once("interactionCreate", (interaction) => {
 
   if (interaction.commandName === "embed") {
     const embed = new EmbedBuilder()
-      .setTitle("Embed title")
-      .setDescription("This is an embed description")
+      .setTitle("미피 봇입니다.")
+      .setDescription("미피 봇은 개발 공부 중입니다.")
       .setColor("Random")
       .addFields(
         {
