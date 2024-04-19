@@ -18,8 +18,8 @@ module.exports = (exceptions = [] ) => {
             if(exceptions.includes(commandObject.name)) {
                 continue;    
             }
-            
-            console.log(commandObject);
+
+            // console.log(commandObject);
             localCommands.push(commandObject);
         }
     }

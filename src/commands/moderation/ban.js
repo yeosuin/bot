@@ -59,7 +59,6 @@ module.exports = {
         {
             name: 'target-user',
             description: '추방할 유저를 고르시오.',
-           
             type: ApplicationCommandOptionType.Mentionable,
         },
         {
