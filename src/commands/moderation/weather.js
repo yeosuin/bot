@@ -77,7 +77,6 @@ module.exports = {
   let area = interaction.options.get("지역")?.value;
   let city = interaction.options.get("시")?.value;
   let dong = interaction.options.get("동")?.value;
-  console.log(dong)
 
   await interaction.deferReply();
 
@@ -118,7 +117,6 @@ module.exports = {
                             area = json[i][0];
                             city = json[i][1];
                             dong = json[i][2];
-                            console.log(dong)
                             break
                         }
                     }
@@ -258,21 +256,6 @@ module.exports = {
                 {name:"오늘의 강수 형태", value:PTY}
               ).setDescription(area+"의 ");
 
-            }else if(typeA){
-
-              todayEmbed.addFields(
-                    {
-                      name: "오늘의 하늘",
-                      value: SKY,
-                      inline: true,
-                    },
-                    { name: "오늘의 습도", value: REH + "%" },
-                    {
-                      name: "아침 최저기온", value: TMX
-                    },
-                    {name:"오늘의 강수 형태", value:PTY}
-                  ).setDescription(area+" "+city+"의 ");
-
             }else if(typeA && typeB){
 
               todayEmbed.addFields(
@@ -288,10 +271,24 @@ module.exports = {
                     {name:"오늘의 강수 형태", value:PTY}
                   ).setDescription(area+" "+city+" "+dong+"의 ");
 
+            }else if(typeA){
+
+              todayEmbed.addFields(
+                    {
+                      name: "오늘의 하늘",
+                      value: SKY,
+                      inline: true,
+                    },
+                    { name: "오늘의 습도", value: REH + "%" },
+                    {
+                      name: "아침 최저기온", value: TMX
+                    },
+                    {name:"오늘의 강수 형태", value:PTY}
+                  ).setDescription(area+" "+city+"의 ");
+
             }
           }else{
             if (!typeA && !typeB) {
-
               todayEmbed.addFields(
                   {
                     name: "오늘의 하늘",
@@ -304,22 +301,7 @@ module.exports = {
                   },
                 ).setDescription(area+"의 ");
 
-              }else if(typeA){
-
-                todayEmbed.addFields(
-                      {
-                        name: "오늘의 하늘",
-                        value: SKY,
-                        inline: true,
-                      },
-                      { name: "오늘의 습도", value: REH + "%" },
-                      {
-                        name: "아침 최저기온", value: TMX
-                      },
-                    ).setDescription(area+" "+city+"의 ");
-
               }else if(typeA && typeB){
-
                 todayEmbed.addFields(
                       {
                         name: "오늘의 하늘",
@@ -331,6 +313,19 @@ module.exports = {
                         name: "아침 최저기온", value: TMX
                       },
                     ).setDescription(area+" "+city+" "+dong+"의 ");
+
+              }else if(typeA){
+                todayEmbed.addFields(
+                      {
+                        name: "오늘의 하늘",
+                        value: SKY,
+                        inline: true,
+                      },
+                      { name: "오늘의 습도", value: REH + "%" },
+                      {
+                        name: "아침 최저기온", value: TMX
+                      },
+                    ).setDescription(area+" "+city+"의 ");
 
               }
           }
