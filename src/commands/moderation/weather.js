@@ -23,7 +23,7 @@ module.exports = {
     },
   ],
 
-  callback: async (args, interaction) => {
+  callback: async (interaction) => {
 
     const date = new Date();
     let tiem = 0200;
