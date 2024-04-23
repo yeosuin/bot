@@ -8,17 +8,17 @@ module.exports = {
   options: [
     {
       name: "지역",
-      description: "지역을 골라",
+      description: "<시/도>",
       type: ApplicationCommandOptionType.String,
     },
     {
       name: "시",
-      description: "시",
+      description: "<선택:시/구/군>",
       type: ApplicationCommandOptionType.String,
     },
     {
       name: "동",
-      description: "dong",
+      description: "<선택:읍/면/동>",
       type: ApplicationCommandOptionType.String,
     },
   ],
@@ -62,9 +62,7 @@ module.exports = {
       }
     }
 
-   
 
-   try {
     const embed = new EmbedBuilder()
     .setTitle(":hammer: 올바른 시 또는 도를 입력해 주세요  :hammer:")
     .setDescription(" ")
@@ -76,54 +74,65 @@ module.exports = {
     });
 
   const areas = interaction.options.get("지역");
-  const area = interaction.options.get("지역")?.value;
-  const city = interaction.options.get("시")?.value;
-  const dong = interaction.options.get("동")?.value;
+  let area = interaction.options.get("지역")?.value;
+  let city = interaction.options.get("시")?.value;
+  let dong = interaction.options.get("동")?.value;
+  console.log(dong)
 
   await interaction.deferReply();
+
   if(areas === null) {
     await interaction.editReply({ embeds: [embed] })
-  } else
+  }
+
     fs.readFile("Data.json", 'utf-8', function (err, result) {
       const json = JSON.parse(result);
       let typeA = false;
       let typeB = false;
       for(let i = 0; i<json.length; i++){
-        if(area === json[i][0]){
-            if(city == null && dong == null){
-                if(json[i][1] == "" && json[i][2] == ""){
+        if(json[i][0].indexOf(area) !== -1){
+            if(city === null && dong === null){
+                if(json[i][1] === "" && json[i][2] === ""){
                     queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /* */
                     queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('30'); /* */
                     queryParams += '&' + encodeURIComponent('base_date') + '=' + encodeURIComponent(format); /* */
                     queryParams += '&' + encodeURIComponent('base_time') + '=' + encodeURIComponent(time); /* */
                     queryParams += '&' + encodeURIComponent('nx') + '=' + encodeURIComponent(json[i][3]); /* */
                     queryParams += '&' + encodeURIComponent('ny') + '=' + encodeURIComponent(json[i][4]); /* */
+                    area = json[i][0];
+                    city = "";
                     break
                 }
             }else if(city != null){
                 if(dong != null){
-                    if(city == json[i][1]){
-                        if(dong == json[i][2]){
-                            typeA = true
-                            typeB = true
+                    if(json[i][1].indexOf(city) !== -1){
+                        if(json[i][2].indexOf(dong) !== -1){
+                            typeA = true;
+                            typeB = true;
                             queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /* */
                             queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('30'); /* */
                             queryParams += '&' + encodeURIComponent('base_date') + '=' + encodeURIComponent(format); /* */
                             queryParams += '&' + encodeURIComponent('base_time') + '=' + encodeURIComponent(time); /* */
                             queryParams += '&' + encodeURIComponent('nx') + '=' + encodeURIComponent(json[i][3]); /* */
                             queryParams += '&' + encodeURIComponent('ny') + '=' + encodeURIComponent(json[i][4]); /* */
+                            area = json[i][0];
+                            city = json[i][1];
+                            dong = json[i][2];
+                            console.log(dong)
                             break
                         }
                     }
                 }else{
-                    if(city== json[i][1]){
-                        typeA = true
+                    if(json[i][1].indexOf(city) !== -1){
+                        typeA = true;
                         queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /* */
                         queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('30'); /* */
                         queryParams += '&' + encodeURIComponent('base_date') + '=' + encodeURIComponent(format); /* */
                         queryParams += '&' + encodeURIComponent('base_time') + '=' + encodeURIComponent(time); /* */
                         queryParams += '&' + encodeURIComponent('nx') + '=' + encodeURIComponent(json[i][3]); /* */
                         queryParams += '&' + encodeURIComponent('ny') + '=' + encodeURIComponent(json[i][4]); /* */
+                        area = json[i][0];
+                        city = json[i][1];
                         break
                     }
                 }
@@ -157,7 +166,6 @@ module.exports = {
           let PTY = "";
           let POP = false;
           for (let x = 0; x < jsonData.response.body.items.item.length; x++) {
-            console.log(jsonData.response.body.items.item[x].category, jsonData.response.body.items.item[x].fcstValue)
             switch (jsonData.response.body.items.item[x].category) {
               case "SKY":
                 switch (jsonData.response.body.items.item[x].fcstValue) {
@@ -230,13 +238,13 @@ module.exports = {
           if (SKY === "") {
             SKY = "조회된 데이터가 없습니다."
           }
-          let description = "";
+
           let todayEmbed = new EmbedBuilder()
-            .setTitle("오늘의 날씨")
-            .setDescription(description);
+            .setTitle("오늘의 날씨").setColor("#83ff88");
             
           if (POP) {
             if (!typeA && !typeB) {
+
               todayEmbed.addFields(
                 {
                   name: "오늘의 하늘",
@@ -248,9 +256,10 @@ module.exports = {
                   name: "아침 최저기온", value: TMX
                 },
                 {name:"오늘의 강수 형태", value:PTY}
-              );
-              description = json[i][0]+" "+json[i][1]+"의 "
+              ).setDescription(area+"의 ");
+
             }else if(typeA){
+
               todayEmbed.addFields(
                     {
                       name: "오늘의 하늘",
@@ -262,9 +271,10 @@ module.exports = {
                       name: "아침 최저기온", value: TMX
                     },
                     {name:"오늘의 강수 형태", value:PTY}
-                  );
-                  description = json[i][0]+" "+json[i][1]+"의 "
-            }else if(typeB){
+                  ).setDescription(area+" "+city+"의 ");
+
+            }else if(typeA && typeB){
+
               todayEmbed.addFields(
                     {
                       name: "오늘의 하늘",
@@ -276,11 +286,12 @@ module.exports = {
                       name: "아침 최저기온", value: TMX
                     },
                     {name:"오늘의 강수 형태", value:PTY}
-                  );
-                  description = json[i][0]+" "+json[i][1]+" "+json[i][2]+"의 "
+                  ).setDescription(area+" "+city+" "+dong+"의 ");
+
             }
           }else{
             if (!typeA && !typeB) {
+
               todayEmbed.addFields(
                   {
                     name: "오늘의 하늘",
@@ -291,9 +302,10 @@ module.exports = {
                   {
                     name: "아침 최저기온", value: TMX
                   },
-                );
-                description = json[i][0]+" "+json[i][1]+"의 "
+                ).setDescription(area+"의 ");
+
               }else if(typeA){
+
                 todayEmbed.addFields(
                       {
                         name: "오늘의 하늘",
@@ -304,9 +316,10 @@ module.exports = {
                       {
                         name: "아침 최저기온", value: TMX
                       },
-                    );
-                    description = json[i][0]+" "+json[i][1]+"의 "
-              }else if(typeB){
+                    ).setDescription(area+" "+city+"의 ");
+
+              }else if(typeA && typeB){
+
                 todayEmbed.addFields(
                       {
                         name: "오늘의 하늘",
@@ -317,17 +330,14 @@ module.exports = {
                       {
                         name: "아침 최저기온", value: TMX
                       },
-                    );
-                    description = json[i][0]+" "+json[i][1]+" "+json[i][2]+"의 "
+                    ).setDescription(area+" "+city+" "+dong+"의 ");
+
               }
           }
-          await interaction.editReply({ embeds: [todayEmbed] }+"년 "+nowmonth+"월 "+nowdate+"일의 날씨예요")
-        }
-      );
+          await interaction.editReply({ embeds: [todayEmbed] });
+        });
     
-    });
-   } catch (error) {
-    console.log(error)
-   }
-  },
+    });//파일 읽기
+
+  }, //종료
 };
