@@ -1,4 +1,4 @@
-const { EmbedBuilder, ApplicationCommandOptionType } = require("discord.js");
+const { EmbedBuilder, ApplicationCommandOptionType, Interaction } = require("discord.js");
 const fs = require('fs');
 const { encoding, decoding } = require("../../../config.json");
 
@@ -22,8 +22,12 @@ module.exports = {
       type: ApplicationCommandOptionType.String,
     },
   ],
+  /**
+   * 
+   * @param {Interaction} interaction 
+   */
 
-  callback: async (interaction) => {
+  callback: async (client, interaction) => {
 
     const date = new Date();
     let tiem = 0200;
@@ -73,7 +77,7 @@ module.exports = {
       inline: true,
     });
 
-  const areas = interaction.options.get("지역");
+  const areas = interaction.options.get('지역');
   let area = interaction.options.get("지역")?.value;
   let city = interaction.options.get("시")?.value;
   let dong = interaction.options.get("동")?.value;
@@ -84,13 +88,13 @@ module.exports = {
     await interaction.editReply({ embeds: [embed] })
   }
 
-    fs.readFile("Data.json", 'utf-8', function (err, result) {
+    fs.readFile("Data.json", function (err, result) {
       const json = JSON.parse(result);
       let typeA = false;
       let typeB = false;
       for(let i = 0; i<json.length; i++){
         if(json[i][0].indexOf(area) !== -1){
-            if(city === null && dong === null){
+            if(city == null && dong == null){
                 if(json[i][1] === "" && json[i][2] === ""){
                     queryParams += '&' + encodeURIComponent('pageNo') + '=' + encodeURIComponent('1'); /* */
                     queryParams += '&' + encodeURIComponent('numOfRows') + '=' + encodeURIComponent('30'); /* */
@@ -156,7 +160,6 @@ module.exports = {
           if (jsonData.response.header.resultCode === "01") {
             await interaction.editReply({ embeds: [empty] });
           }
-          
           let SKY = "";
           let REH = "";
           let TMN = "";
@@ -239,7 +242,7 @@ module.exports = {
 
           let todayEmbed = new EmbedBuilder()
             .setTitle("오늘의 날씨").setColor("#83ff88");
-            
+
           if (POP) {
             if (!typeA && !typeB) {
 
@@ -331,7 +334,7 @@ module.exports = {
           }
           await interaction.editReply({ embeds: [todayEmbed] });
         });
-    
+
     });//파일 읽기
 
   }, //종료
